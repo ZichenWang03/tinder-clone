@@ -1,20 +1,20 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import TinderCard from "react-tinder-card";
+import database from './firebase';
 import "./TinderCards.css";
 
 function TinderCards() {
-    const [people, setPeople] = useState([
-      {
-        name: "Elon",
-        url:
-          "https://en.meming.world/images/en/2/2c/Elon_Musk_Smoking_Weed.jpg",
-      },
-      {
-        name: "Doge",
-        url:
-          "https://pbs.twimg.com/media/EtXfpgGWYAEIa7y?format=jpg&name=large",
-      },
-    ]);
+    const [people, setPeople] = useState([]);
+    // kinda like if loop
+    useEffect(() => {
+      const unsubscribe = database.collection('people').onSnapshot((snapshot) => 
+        setPeople(snapshot.docs.map((doc) => doc.data()))
+      );
+      return () => {
+        //clean up
+        unsubscribe();
+      }
+    }, [people]);
     //bad 
     // const people = []
     // people.push('abby', 'becky', 'carina')
@@ -25,7 +25,7 @@ function TinderCards() {
     //setPeople is modifier of people
     return (
       <div>
-        <h1>tinder cards 🙂 </h1>
+
         <div className="tinderCards__cardContainer">
           {people.map((person) => (
             <TinderCard
